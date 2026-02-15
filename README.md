@@ -74,10 +74,13 @@ Das Setup-Script prueft automatisch alle Voraussetzungen, installiert die Abhaen
 ### Oder: Manuelle Installation
 
 ```bash
-# Backend
-cd backend
-python3 -m pip install -r requirements.txt
-cd ..
+# Python Virtual Environment erstellen und aktivieren
+python3 -m venv .venv
+source .venv/bin/activate    # macOS/Linux
+# .venv\Scripts\activate     # Windows
+
+# Backend-Abhaengigkeiten installieren
+pip install -r backend/requirements.txt
 
 # Frontend
 cd frontend

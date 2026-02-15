@@ -40,12 +40,15 @@ else
     fi
 fi
 
-# Backend Setup
+# Backend Setup with virtual environment
 echo ""
-echo "[INFO] Backend wird eingerichtet..."
-cd backend
-python3 -m pip install -r requirements.txt
-cd ..
+echo "[INFO] Python Virtual Environment wird erstellt..."
+python3 -m venv .venv
+source .venv/bin/activate
+echo "[OK] Virtual Environment erstellt: .venv/"
+
+echo "[INFO] Backend-Abhaengigkeiten werden installiert..."
+pip install -r backend/requirements.txt
 
 # Frontend Setup
 echo ""

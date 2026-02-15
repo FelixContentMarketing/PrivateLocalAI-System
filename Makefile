@@ -1,5 +1,7 @@
 .PHONY: dev dev-backend dev-frontend build run setup models
 
+VENV := .venv/bin
+
 # Development
 dev:
 	@echo "Starte Backend und Frontend im Entwicklungsmodus..."
@@ -7,7 +9,7 @@ dev:
 	@make dev-frontend
 
 dev-backend:
-	cd backend && python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload
+	$(VENV)/python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload
 
 dev-frontend:
 	cd frontend && npm run dev
@@ -17,16 +19,18 @@ build:
 	cd frontend && npm run build
 
 run: build
-	cd backend && python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000
+	$(VENV)/python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000
 
 # Setup
 setup:
 	@echo "=== PrivateLocalAI Setup ==="
-	@echo "1. Python-Abhaengigkeiten installieren..."
-	cd backend && pip install -r requirements.txt
-	@echo "2. Frontend-Abhaengigkeiten installieren..."
+	@echo "1. Virtual Environment erstellen..."
+	python3 -m venv .venv
+	@echo "2. Python-Abhaengigkeiten installieren..."
+	$(VENV)/pip install -r backend/requirements.txt
+	@echo "3. Frontend-Abhaengigkeiten installieren..."
 	cd frontend && npm install
-	@echo "3. Frontend bauen..."
+	@echo "4. Frontend bauen..."
 	cd frontend && npm run build
 	@echo ""
 	@echo "Setup abgeschlossen!"
