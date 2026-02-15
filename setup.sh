@@ -7,14 +7,48 @@ echo "  100% lokale KI-Dokumentenverarbeitung"
 echo "================================================"
 echo ""
 
-# Check Python
-if command -v python3 &> /dev/null; then
-    PY_VERSION=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
-    echo "[OK] Python $PY_VERSION gefunden"
+# Find compatible Python (3.11-3.13)
+PYTHON_CMD=""
+for cmd in python3.13 python3.12 python3.11 python3; do
+    if command -v "$cmd" &> /dev/null; then
+        PY_VER=$("$cmd" -c 'import sys; print(sys.version_info.minor)')
+        PY_MAJOR=$("$cmd" -c 'import sys; print(sys.version_info.major)')
+        if [ "$PY_MAJOR" = "3" ] && [ "$PY_VER" -ge 11 ] && [ "$PY_VER" -le 13 ]; then
+            PYTHON_CMD="$cmd"
+            break
+        fi
+    fi
+done
+
+if [ -n "$PYTHON_CMD" ]; then
+    PY_VERSION=$("$PYTHON_CMD" -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
+    echo "[OK] Python $PY_VERSION gefunden ($PYTHON_CMD)"
 else
-    echo "[FEHLER] Python 3.11+ wird benoetigt."
-    echo "Installation: https://www.python.org/downloads/"
-    exit 1
+    # Check if any Python 3 exists at all
+    if command -v python3 &> /dev/null; then
+        PY_VERSION=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
+        echo "[WARNUNG] Python $PY_VERSION gefunden, aber Version 3.11-3.13 wird empfohlen."
+        echo "          Python 3.14+ wird von einigen Abhaengigkeiten noch nicht unterstuetzt."
+        echo ""
+        echo "          Empfehlung: brew install python@3.13"
+        echo ""
+        read -p "Trotzdem mit Python $PY_VERSION fortfahren? (j/n): " USE_CURRENT
+        if [ "$USE_CURRENT" = "j" ]; then
+            PYTHON_CMD="python3"
+        else
+            echo ""
+            echo "Bitte installieren Sie Python 3.13:"
+            echo "  brew install python@3.13"
+            echo ""
+            echo "Danach erneut ausfuehren: ./setup.sh"
+            exit 1
+        fi
+    else
+        echo "[FEHLER] Python 3.11-3.13 wird benoetigt."
+        echo "Installation: brew install python@3.13"
+        echo "Oder: https://www.python.org/downloads/"
+        exit 1
+    fi
 fi
 
 # Check Node.js
@@ -43,11 +77,12 @@ fi
 # Backend Setup with virtual environment
 echo ""
 echo "[INFO] Python Virtual Environment wird erstellt..."
-python3 -m venv .venv
+"$PYTHON_CMD" -m venv .venv
 source .venv/bin/activate
-echo "[OK] Virtual Environment erstellt: .venv/"
+echo "[OK] Virtual Environment erstellt: .venv/ ($(python3 --version))"
 
 echo "[INFO] Backend-Abhaengigkeiten werden installiert..."
+pip install --upgrade pip > /dev/null 2>&1
 pip install -r backend/requirements.txt
 
 # Frontend Setup

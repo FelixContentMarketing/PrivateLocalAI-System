@@ -37,7 +37,7 @@ Bevor Sie beginnen, stellen Sie sicher, dass folgende Software installiert ist:
 
 | Software | Version | Download |
 |----------|---------|----------|
-| **Python** | 3.11+ | [python.org/downloads](https://www.python.org/downloads/) |
+| **Python** | 3.11-3.13 | `brew install python@3.13` oder [python.org](https://www.python.org/downloads/) |
 | **Node.js** | 18+ | [nodejs.org](https://nodejs.org/) |
 | **Ollama** | aktuell | [ollama.com/download](https://ollama.com/download) |
 
