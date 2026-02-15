@@ -1,0 +1,27 @@
+AUFGABE: Erstelle eine strukturierte Zusammenfassung des folgenden Gespraechstranskripts.
+
+AUSGABEFORMAT:
+
+## ZUSAMMENFASSUNG (ENTWURF)
+
+**Datum:** [aus Transkript oder "nicht angegeben"]
+**Teilnehmer:** [Liste der genannten Personen]
+**Betreff:** [Kernthema in einem Satz]
+
+### Sachverhalt
+[Kompakte Darstellung der besprochenen Fakten in 3-5 Saetzen]
+
+### Zentrale Rechtsfragen
+[Auflistung der identifizierten Rechtsfragen als Bulletpoints]
+
+### Besprochene Optionen
+[Welche Handlungsoptionen wurden diskutiert?]
+
+### Offene Punkte
+[Was muss noch geklaert werden?]
+
+### Naechste Schritte
+[Vereinbarte oder empfohlene naechste Schritte]
+
+---
+*ENTWURF -- Erstellt durch KI-Assistenz. Keine Rechtsberatung.*

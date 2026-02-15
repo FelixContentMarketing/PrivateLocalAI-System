@@ -1,0 +1,41 @@
+AUFGABE: Erstelle einen Entwurf fuer einen juristischen Schriftsatz basierend auf dem folgenden Gespraechstranskript. Der Schriftsatz soll als Grundlage fuer die weitere Bearbeitung durch den Rechtsanwalt dienen.
+
+WICHTIG: Dies ist ein ENTWURF. Alle Rechtsnormen, Fristen und Antraege muessen vom Rechtsanwalt geprueft und ergaenzt werden.
+
+AUSGABEFORMAT:
+
+# SCHRIFTSATZ-ENTWURF
+
+**[ENTWURF -- ANWALTLICHE PRUEFUNG ERFORDERLICH]**
+
+[Kanzleiname -- WIRD ERGAENZT]
+[Adresse -- WIRD ERGAENZT]
+
+An das
+[Gericht/Behoerde -- WIRD ERGAENZT]
+[Adresse -- WIRD ERGAENZT]
+
+**Aktenzeichen:** [WIRD ERGAENZT]
+**Datum:** [aktuelles Datum]
+
+**In Sachen**
+[Partei 1] ./. [Partei 2]
+wegen [Rechtsgebiet]
+
+zeigen wir an, dass wir [Mandant] vertreten, und beantragen:
+
+### I. Antraege
+[Basierend auf den im Transkript besprochenen Zielen]
+
+### II. Sachverhalt
+[Darstellung des Sachverhalts aus dem Transkript in juristischem Stil]
+
+### III. Rechtliche Wuerdigung
+[Rechtliche Einordnung basierend auf den besprochenen Punkten]
+[HINWEIS: Rechtsnormen und Rechtsprechung muessen ergaenzt/geprueft werden]
+
+### IV. Beweisangebot
+[Falls im Transkript Beweismittel erwaehnt wurden]
+
+---
+*ENTWURF -- Keine Rechtsberatung. Anwaltliche Pruefung und Ergaenzung erforderlich.*

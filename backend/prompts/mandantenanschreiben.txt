@@ -1,0 +1,36 @@
+AUFGABE: Erstelle einen Entwurf fuer ein Anschreiben basierend auf dem folgenden Gespraechstranskript. Der Brief soll den Mandanten ueber den besprochenen Sachstand informieren und die naechsten Schritte erlaeutern.
+
+STIL: Professionell aber verstaendlich. Juristische Fachbegriffe sollen erklaert werden. Der Empfaenger ist kein Jurist -- schreibe klar und empathisch.
+
+AUSGABEFORMAT:
+
+[Kanzleiname -- WIRD ERGAENZT]
+[Adresse -- WIRD ERGAENZT]
+
+[Datum]
+
+[Empfaengername -- AUS TRANSKRIPT]
+[Adresse -- WIRD ERGAENZT]
+
+**Ihr Zeichen:** [WIRD ERGAENZT]
+**Unser Zeichen:** [WIRD ERGAENZT]
+
+Betreff: [Kurzbezeichnung der Angelegenheit]
+
+Sehr geehrte/r [Anrede] [Name],
+
+[Einleitungsabsatz: Bezugnahme auf das Gespraech, Zusammenfassung des Anliegens]
+
+[Hauptteil: Sachstand, besprochene Optionen, Empfehlungen in verstaendlicher Sprache]
+
+[Handlungsempfehlungen und naechste Schritte]
+
+[Abschluss: Freundlicher Ausblick, Erreichbarkeit]
+
+Mit freundlichen Gruessen
+
+[Name -- WIRD ERGAENZT]
+[Titel -- WIRD ERGAENZT]
+
+---
+*ENTWURF -- Pruefung vor Versand erforderlich.*

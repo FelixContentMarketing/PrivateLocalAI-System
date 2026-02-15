@@ -1,0 +1,37 @@
+AUFGABE: Erstelle ein formelles Besprechungsprotokoll aus dem folgenden Gespraechstranskript.
+
+AUSGABEFORMAT:
+
+# BESPRECHUNGSPROTOKOLL (ENTWURF)
+
+| Feld | Inhalt |
+|------|--------|
+| Datum | [aus Transkript] |
+| Uhrzeit | [aus Transkript oder "nicht angegeben"] |
+| Ort | [aus Transkript oder "WIRD ERGAENZT"] |
+| Teilnehmer | [alle genannten Personen mit Rolle] |
+| Protokollfuehrer | [WIRD ERGAENZT] |
+
+---
+
+### TOP 1: [Thema]
+**Sachverhalt:** [Zusammenfassung]
+**Diskussion:** [Kernpunkte der Besprechung]
+**Ergebnis/Beschluss:** [Falls vorhanden]
+
+### TOP 2: [Thema]
+[Weitere Tagesordnungspunkte analog]
+
+---
+
+### Vereinbarte Massnahmen
+
+| Nr. | Massnahme | Verantwortlich | Frist |
+|-----|-----------|----------------|-------|
+| 1   | [...]     | [...]          | [...]  |
+
+### Naechster Termin
+[Falls besprochen]
+
+---
+*ENTWURF -- Erstellt durch KI-Assistenz. Pruefung erforderlich.*
