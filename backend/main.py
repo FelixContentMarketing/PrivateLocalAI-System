@@ -2,8 +2,9 @@ import logging
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from backend.config import settings
@@ -87,10 +88,20 @@ app.include_router(export_router, prefix="/api")
 app.include_router(auth_router, prefix="/api")
 app.include_router(settings_router, prefix="/api")
 
-# Serve frontend static files in production
+# Serve frontend static files in production (SPA fallback)
 frontend_dist = Path(__file__).parent.parent / "frontend" / "dist"
 if frontend_dist.exists():
-    app.mount("/", StaticFiles(directory=str(frontend_dist), html=True), name="frontend")
+    # Static assets (JS, CSS, images) served directly
+    app.mount("/assets", StaticFiles(directory=str(frontend_dist / "assets")), name="assets")
+
+    # SPA fallback: all non-API routes serve index.html
+    @app.get("/{full_path:path}")
+    async def spa_fallback(request: Request, full_path: str):
+        # Serve actual static files if they exist (favicon.png, etc.)
+        file_path = frontend_dist / full_path
+        if full_path and file_path.is_file():
+            return FileResponse(file_path)
+        return FileResponse(frontend_dist / "index.html")
 
 
 if __name__ == "__main__":
