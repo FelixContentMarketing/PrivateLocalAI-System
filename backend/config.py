@@ -48,14 +48,14 @@ class Settings(BaseModel):
             "price": "$0.30 / $2.50 pro M Token",
         },
         {
-            "id": "google/gemini-3-flash-preview",
-            "label": "Gemini 3 Flash",
-            "price": "Preview (Preis TBD)",
+            "id": "google/gemini-2.5-pro",
+            "label": "Gemini 2.5 Pro",
+            "price": "$1.25 / $10.00 pro M Token",
         },
         {
-            "id": "google/gemini-2.5-flash-lite-preview-06-17",
+            "id": "google/gemini-2.5-flash-lite",
             "label": "Gemini 2.5 Flash Lite",
-            "price": "$0.10 / $0.40 pro M Token",
+            "price": "$0.075 / $0.30 pro M Token",
         },
         {
             "id": "qwen/qwen2.5-vl-72b-instruct",
