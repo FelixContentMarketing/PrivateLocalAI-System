@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../../lib/auth'
-import { LayoutDashboard, Settings, LogOut, X } from 'lucide-react'
+import { LayoutDashboard, Settings, Users, LogOut, X } from 'lucide-react'
 
 interface SidebarProps {
   open: boolean
@@ -8,8 +8,9 @@ interface SidebarProps {
 }
 
 const NAV_ITEMS = [
-  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/einstellungen', label: 'Einstellungen', icon: Settings },
+  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, adminOnly: false },
+  { to: '/benutzer', label: 'Benutzerverwaltung', icon: Users, adminOnly: true },
+  { to: '/einstellungen', label: 'Einstellungen', icon: Settings, adminOnly: false },
 ]
 
 export function Sidebar({ open, onClose }: SidebarProps) {
@@ -49,7 +50,9 @@ export function Sidebar({ open, onClose }: SidebarProps) {
 
         {/* Navigation */}
         <nav className="flex-1 px-3 py-4 flex flex-col gap-1">
-          {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
+          {NAV_ITEMS
+            .filter(item => !item.adminOnly || user?.role === 'admin')
+            .map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to}
               to={to}

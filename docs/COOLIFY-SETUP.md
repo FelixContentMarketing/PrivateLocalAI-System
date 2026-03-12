@@ -46,6 +46,18 @@ In der Application > **Environment Variables** folgende Variablen anlegen:
 | `OPENROUTER_API_KEY` | `sk-or-v1-...` | OpenRouter API Key ([openrouter.ai/keys](https://openrouter.ai/keys)) |
 | `SELECTED_MODEL` | `google/gemini-2.5-flash` | Standard Cloud-Modell |
 
+### Datenbank (empfohlen fuer Cloud)
+
+| Variable | Wert | Beschreibung |
+|---|---|---|
+| `DATABASE_URL` | `postgresql://user:pass@host:5432/dbname` | PostgreSQL-Verbindung. Leer = SQLite (nur fuer lokalen Betrieb) |
+
+**PostgreSQL in Coolify anlegen:**
+1. **Coolify UI** > **Projects** > Kanzlei Kissling > **+ New Resource** > **Database** > **PostgreSQL**
+2. Name: `kanzlei-kissling-db`
+3. Default-Credentials notieren oder eigene setzen
+4. Die generierte `DATABASE_URL` als Umgebungsvariable in der Application setzen
+
 ### Optionale Variablen
 
 | Variable | Default | Beschreibung |
@@ -69,7 +81,9 @@ openssl rand -hex 32
 3. **Source Path** (auf dem Host): `/data/coolify/kanzlei-kissling/data`
 4. **Destination Path** (im Container): `/app/data`
 
-Hier wird die SQLite-Datenbank (users.db) und settings.json gespeichert.
+Bei Betrieb mit PostgreSQL (`DATABASE_URL` gesetzt) werden User-Daten in PostgreSQL gespeichert.
+Der Volume speichert dann nur noch settings.json.
+Bei Betrieb ohne PostgreSQL (lokal) wird hier auch die SQLite-Datenbank (users.db) gespeichert.
 
 ## Schritt 6: Health Check (optional)
 
@@ -94,7 +108,7 @@ Container (Port 8000)
   +-- FastAPI Backend
   |     +-- /api/* Endpoints
   |     +-- JWT Auth (Cookie: kk-auth-token)
-  |     +-- SQLite DB (/app/data/users.db)
+  |     +-- PostgreSQL (Cloud) oder SQLite (Lokal)
   |     +-- Settings (/app/data/settings.json)
   |
   +-- Static Files (Frontend)

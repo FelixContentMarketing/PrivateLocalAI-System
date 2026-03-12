@@ -6,6 +6,7 @@ import { useHealth } from '../../hooks/useHealth'
 
 const PAGE_TITLES: Record<string, string> = {
   '/dashboard': 'Dashboard',
+  '/benutzer': 'Benutzerverwaltung',
   '/einstellungen': 'Einstellungen',
 }
 

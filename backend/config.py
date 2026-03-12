@@ -33,6 +33,9 @@ class Settings(BaseModel):
     admin_email: str = os.environ.get("ADMIN_EMAIL", "")
     admin_password: str = os.environ.get("ADMIN_PASSWORD", "")
 
+    # Datenbank (PostgreSQL fuer Cloud, SQLite fuer lokal)
+    database_url: str = os.environ.get("DATABASE_URL", "")
+
     # OpenRouter API (Cloud)
     openrouter_api_key: str = os.environ.get("OPENROUTER_API_KEY", "")
     selected_model: str = os.environ.get("SELECTED_MODEL", "google/gemini-2.5-flash")

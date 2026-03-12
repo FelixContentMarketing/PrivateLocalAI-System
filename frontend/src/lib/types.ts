@@ -109,3 +109,13 @@ export interface SettingsResponse {
   available_models: CloudModel[]
   log_level: string
 }
+
+export interface ManagedUser {
+  id: string
+  email: string
+  name: string | null
+  role: string
+  is_active: number | boolean
+  last_login_at: string | null
+  created_at: string
+}

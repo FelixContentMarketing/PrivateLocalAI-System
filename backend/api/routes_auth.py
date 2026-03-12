@@ -1,17 +1,19 @@
-"""Auth-Router: Login, Registrierung, Logout, Session-Check."""
+"""Auth-Router: Login, Registrierung, Logout, Session-Check, User-Verwaltung."""
 
 from __future__ import annotations
 
 import logging
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, HTTPException, Request, Response
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 
 from backend.auth import (
     AUTH_COOKIE_NAME,
+    AuthUser,
     build_auth_cookie,
     build_logout_cookie,
     hash_password,
+    require_admin,
     sign_token,
     verify_password,
     verify_token,
@@ -63,8 +65,15 @@ async def login(login_data: LoginRequest, request: Request, response: Response):
 
     user = await user_db.get_user_by_email(login_data.email)
 
-    if not user or not user["is_active"]:
+    if not user:
         raise HTTPException(401, "Ungueltige Anmeldedaten")
+
+    if not user["is_active"]:
+        raise HTTPException(
+            403,
+            "Ihr Konto wurde noch nicht freigeschaltet. "
+            "Bitte wenden Sie sich an einen Administrator.",
+        )
 
     if not verify_password(login_data.password, user["password_hash"]):
         raise HTTPException(401, "Ungueltige Anmeldedaten")
@@ -126,3 +135,71 @@ async def me(request: Request):
             "role": db_user["role"],
         }
     }
+
+
+# --- Admin: Benutzerverwaltung ---
+
+
+@router.get("/users")
+async def list_users(_admin: AuthUser = Depends(require_admin)):
+    users = await user_db.list_users()
+    return {"users": users}
+
+
+@router.put("/users/{user_id}/activate")
+async def activate_user(user_id: str, _admin: AuthUser = Depends(require_admin)):
+    user = await user_db.get_user_by_id(user_id)
+    if not user:
+        raise HTTPException(404, "Benutzer nicht gefunden")
+
+    await user_db.update_user(user_id, is_active=1)
+    logger.info("User freigeschaltet: %s (durch %s)", user["email"], _admin.email)
+    return {"success": True, "message": f"Benutzer {user['email']} freigeschaltet"}
+
+
+@router.put("/users/{user_id}/deactivate")
+async def deactivate_user(user_id: str, _admin: AuthUser = Depends(require_admin)):
+    user = await user_db.get_user_by_id(user_id)
+    if not user:
+        raise HTTPException(404, "Benutzer nicht gefunden")
+
+    if user["id"] == _admin.user_id:
+        raise HTTPException(400, "Sie koennen sich nicht selbst deaktivieren")
+
+    await user_db.update_user(user_id, is_active=0)
+    logger.info("User deaktiviert: %s (durch %s)", user["email"], _admin.email)
+    return {"success": True, "message": f"Benutzer {user['email']} deaktiviert"}
+
+
+@router.put("/users/{user_id}/role")
+async def change_role(
+    user_id: str,
+    request: Request,
+    _admin: AuthUser = Depends(require_admin),
+):
+    body = await request.json()
+    new_role = body.get("role")
+    if new_role not in ("user", "admin"):
+        raise HTTPException(400, "Ungueltige Rolle")
+
+    user = await user_db.get_user_by_id(user_id)
+    if not user:
+        raise HTTPException(404, "Benutzer nicht gefunden")
+
+    await user_db.update_user(user_id, role=new_role)
+    logger.info("Rolle geaendert: %s -> %s (durch %s)", user["email"], new_role, _admin.email)
+    return {"success": True, "message": f"Rolle von {user['email']} auf {new_role} geaendert"}
+
+
+@router.delete("/users/{user_id}")
+async def delete_user(user_id: str, _admin: AuthUser = Depends(require_admin)):
+    user = await user_db.get_user_by_id(user_id)
+    if not user:
+        raise HTTPException(404, "Benutzer nicht gefunden")
+
+    if user["id"] == _admin.user_id:
+        raise HTTPException(400, "Sie koennen sich nicht selbst loeschen")
+
+    await user_db.delete_user(user_id)
+    logger.info("User geloescht: %s (durch %s)", user["email"], _admin.email)
+    return {"success": True, "message": f"Benutzer {user['email']} geloescht"}

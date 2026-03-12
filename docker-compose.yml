@@ -4,6 +4,10 @@
 # Starten: docker compose up -d
 # Logs:    docker compose logs -f
 # Stoppen: docker compose down
+#
+# Mit PostgreSQL:
+#   docker compose --profile postgres up -d
+#   DATABASE_URL=postgresql://kissling:kissling@postgres:5432/kissling
 # =============================================================
 
 services:
@@ -21,6 +25,9 @@ services:
       - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@kanzlei-kissling.de}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
 
+      # Datenbank: PostgreSQL (Cloud) oder leer fuer SQLite (lokal)
+      - DATABASE_URL=${DATABASE_URL:-}
+
       # OpenRouter (Cloud-Modelle) -- optional
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
       - SELECTED_MODEL=${SELECTED_MODEL:-google/gemini-2.5-flash}
@@ -35,6 +42,26 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
+  # PostgreSQL -- optional, fuer Cloud-Deployment empfohlen
+  # Aktivieren: docker compose --profile postgres up -d
+  # Dann DATABASE_URL=postgresql://kissling:kissling@postgres:5432/kissling in .env setzen
+  postgres:
+    image: postgres:16-alpine
+    container_name: kanzlei-kissling-db
+    restart: unless-stopped
+    profiles:
+      - postgres
+    environment:
+      POSTGRES_DB: kissling
+      POSTGRES_USER: kissling
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-kissling}
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
 volumes:
   app-data:
+    driver: local
+  pg-data:
     driver: local

@@ -7,6 +7,7 @@ import type {
   GenerateRequest,
   GenerateResponse,
   SettingsResponse,
+  ManagedUser,
 } from './types'
 
 async function fetchJSON<T>(url: string, options?: RequestInit): Promise<T> {
@@ -79,4 +80,30 @@ export async function updateSettings(data: {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   })
+}
+
+// --- Admin: Benutzerverwaltung ---
+
+export async function getUsers(): Promise<{ users: ManagedUser[] }> {
+  return fetchJSON('/auth/users')
+}
+
+export async function activateUser(userId: string): Promise<{ success: boolean }> {
+  return fetchJSON(`/auth/users/${userId}/activate`, { method: 'PUT' })
+}
+
+export async function deactivateUser(userId: string): Promise<{ success: boolean }> {
+  return fetchJSON(`/auth/users/${userId}/deactivate`, { method: 'PUT' })
+}
+
+export async function changeUserRole(userId: string, role: string): Promise<{ success: boolean }> {
+  return fetchJSON(`/auth/users/${userId}/role`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ role }),
+  })
+}
+
+export async function deleteUser(userId: string): Promise<{ success: boolean }> {
+  return fetchJSON(`/auth/users/${userId}`, { method: 'DELETE' })
 }
