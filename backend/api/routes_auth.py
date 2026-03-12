@@ -152,7 +152,7 @@ async def activate_user(user_id: str, _admin: AuthUser = Depends(require_admin))
     if not user:
         raise HTTPException(404, "Benutzer nicht gefunden")
 
-    await user_db.update_user(user_id, is_active=1)
+    await user_db.update_user(user_id, is_active=True)
     logger.info("User freigeschaltet: %s (durch %s)", user["email"], _admin.email)
     return {"success": True, "message": f"Benutzer {user['email']} freigeschaltet"}
 
@@ -166,7 +166,7 @@ async def deactivate_user(user_id: str, _admin: AuthUser = Depends(require_admin
     if user["id"] == _admin.user_id:
         raise HTTPException(400, "Sie koennen sich nicht selbst deaktivieren")
 
-    await user_db.update_user(user_id, is_active=0)
+    await user_db.update_user(user_id, is_active=False)
     logger.info("User deaktiviert: %s (durch %s)", user["email"], _admin.email)
     return {"success": True, "message": f"Benutzer {user['email']} deaktiviert"}
 

@@ -40,7 +40,7 @@ def _create_user_sync(
         db.execute(
             "INSERT INTO users (id, email, password_hash, name, role, is_active) "
             "VALUES (%s, %s, %s, %s, %s, %s)",
-            (user_id, email.lower(), password_hash, name.strip(), role, int(is_active)),
+            (user_id, email.lower(), password_hash, name.strip(), role, bool(is_active)),
         )
         db.commit()
         return db.fetchone("SELECT * FROM users WHERE id = %s", (user_id,))
@@ -127,14 +127,14 @@ def _upsert_user_sync(
             user_id = existing["id"]
             db.execute(
                 "UPDATE users SET password_hash = %s, name = %s, role = %s, is_active = %s WHERE id = %s",
-                (password_hash, name.strip(), role, int(is_active), user_id),
+                (password_hash, name.strip(), role, bool(is_active), user_id),
             )
         else:
             user_id = str(uuid.uuid4())
             db.execute(
                 "INSERT INTO users (id, email, password_hash, name, role, is_active) "
                 "VALUES (%s, %s, %s, %s, %s, %s)",
-                (user_id, email.lower(), password_hash, name.strip(), role, int(is_active)),
+                (user_id, email.lower(), password_hash, name.strip(), role, bool(is_active)),
             )
         db.commit()
         return db.fetchone("SELECT * FROM users WHERE id = %s", (user_id,))
