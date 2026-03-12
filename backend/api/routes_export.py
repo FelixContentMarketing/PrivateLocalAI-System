@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import Response
 from pydantic import BaseModel
 
+from backend.auth import AuthUser, get_current_user
 from backend.services.document_exporter import export_txt, export_docx
 
 router = APIRouter()
@@ -15,7 +16,10 @@ class ExportRequest(BaseModel):
 
 
 @router.post("/export")
-async def export_document(req: ExportRequest):
+async def export_document(
+    req: ExportRequest,
+    _user: AuthUser = Depends(get_current_user),
+):
     if not req.text.strip():
         raise HTTPException(status_code=400, detail="Text darf nicht leer sein")
 

@@ -2,15 +2,17 @@ import { clsx } from 'clsx'
 
 interface StatusIndicatorProps {
   connected: boolean | null
+  label?: string
 }
 
-export function StatusIndicator({ connected }: StatusIndicatorProps) {
+export function StatusIndicator({ connected, label: customLabel }: StatusIndicatorProps) {
+  const prefix = customLabel || 'Ollama'
   const label =
     connected === null
       ? 'Pruefe...'
       : connected
-        ? 'Ollama verbunden'
-        : 'Ollama nicht erreichbar'
+        ? `${prefix} verbunden`
+        : `${prefix} nicht erreichbar`
 
   return (
     <div className="flex items-center gap-2 text-sm">
@@ -21,7 +23,7 @@ export function StatusIndicator({ connected }: StatusIndicatorProps) {
           'bg-warning animate-pulse': connected === null,
         })}
       />
-      <span className="text-neutral-600">{label}</span>
+      <span className="text-text-muted">{label}</span>
     </div>
   )
 }

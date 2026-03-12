@@ -65,7 +65,7 @@ class OllamaClient:
         temperature: float = 0.3,
         max_tokens: int = 4096,
     ) -> AsyncGenerator[dict, None]:
-        """Stream generation tokens from Ollama.
+        """Stream generation tokens from Ollama via /api/chat.
 
         Yields dicts with either:
         - {"token": "...", "done": False}
@@ -73,8 +73,10 @@ class OllamaClient:
         """
         payload = {
             "model": model,
-            "prompt": prompt,
-            "system": system,
+            "messages": [
+                {"role": "system", "content": system},
+                {"role": "user", "content": prompt},
+            ],
             "stream": True,
             "options": {
                 "temperature": temperature,
@@ -85,7 +87,7 @@ class OllamaClient:
         }
 
         client = await self._get_client()
-        async with client.stream("POST", "/api/generate", json=payload) as response:
+        async with client.stream("POST", "/api/chat", json=payload) as response:
             response.raise_for_status()
             async for line in response.aiter_lines():
                 if not line:
@@ -99,7 +101,7 @@ class OllamaClient:
                     }
                 else:
                     yield {
-                        "token": chunk.get("response", ""),
+                        "token": chunk.get("message", {}).get("content", ""),
                         "done": False,
                     }
 

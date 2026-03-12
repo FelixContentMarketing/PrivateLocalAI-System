@@ -12,9 +12,9 @@ export function DsgvoNotice() {
       <div className="flex-1">
         <p className="text-sm text-dark-text font-medium">Datenschutzhinweis</p>
         <p className="text-xs text-dark-muted mt-1">
-          Diese Anwendung verarbeitet alle Daten ausschliesslich lokal auf diesem Computer.
-          Es werden keine Daten an externe Server uebermittelt.
-          Es erfolgt keine dauerhafte Speicherung.
+          Im lokalen Modus (Ollama) werden alle Daten ausschliesslich auf diesem Computer verarbeitet.
+          Im Cloud-Modus werden Transkriptdaten an OpenRouter uebermittelt -- es gelten deren Datenschutzrichtlinien.
+          Es erfolgt keine dauerhafte Speicherung von Transkripten.
           Beim Schliessen des Browsers werden alle eingegebenen Daten geloescht.
         </p>
       </div>

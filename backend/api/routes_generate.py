@@ -1,12 +1,13 @@
-import asyncio
 import json
 import uuid
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sse_starlette.sse import EventSourceResponse
 
+from backend.auth import AuthUser, get_current_user
 from backend.services.ollama_client import ollama_client
+from backend.services.openrouter_client import openrouter_client
 from backend.services.prompt_engine import build_prompt, FORMAT_CONFIG
 
 router = APIRouter()
@@ -19,12 +20,17 @@ class GenerateRequest(BaseModel):
     transcript: str
     format: str
     model: str | None = None
+    mode: str = "local"  # "local" (Ollama) or "cloud" (OpenRouter)
+    cloud_model: str | None = None
     temperature: float | None = None
     max_tokens: int | None = None
 
 
 @router.post("/generate")
-async def start_generation(req: GenerateRequest):
+async def start_generation(
+    req: GenerateRequest,
+    _user: AuthUser = Depends(get_current_user),
+):
     if req.format not in FORMAT_CONFIG:
         raise HTTPException(status_code=400, detail=f"Unbekanntes Format: {req.format}")
 
@@ -38,21 +44,34 @@ async def start_generation(req: GenerateRequest):
     if req.max_tokens is not None:
         options["max_tokens"] = req.max_tokens
 
-    # Use recommended model if none specified
-    model = req.model
-    if not model:
-        models = await ollama_client.list_models()
-        if models:
-            model = models[0]["name"]
-        else:
+    mode = req.mode
+
+    if mode == "cloud":
+        from backend.config import settings as cfg
+
+        if not cfg.openrouter_api_key:
             raise HTTPException(
-                status_code=503,
-                detail="Kein Ollama-Modell verfuegbar. Bitte installieren Sie ein Modell mit: ollama pull llama3.1:8b",
+                status_code=400,
+                detail="OpenRouter API-Key nicht konfiguriert. Bitte in den Einstellungen hinterlegen.",
             )
+        model = req.cloud_model or cfg.selected_model
+    else:
+        # Local / Ollama
+        model = req.model
+        if not model:
+            models = await ollama_client.list_models()
+            if models:
+                model = models[0]["name"]
+            else:
+                raise HTTPException(
+                    status_code=503,
+                    detail="Kein Ollama-Modell verfuegbar. Bitte installieren Sie ein Modell mit: ollama pull llama3.1:8b",
+                )
 
     task_id = str(uuid.uuid4())
     _tasks[task_id] = {
         "status": "started",
+        "mode": mode,
         "model": model,
         "format": req.format,
         "system_prompt": system_prompt,
@@ -63,6 +82,7 @@ async def start_generation(req: GenerateRequest):
     return {
         "task_id": task_id,
         "status": "started",
+        "mode": mode,
         "model": model,
         "format": req.format,
     }
@@ -78,13 +98,25 @@ async def stream_generation(task_id: str):
     async def event_generator():
         try:
             full_text = []
-            async for chunk in ollama_client.generate_stream(
-                model=task["model"],
-                prompt=task["user_prompt"],
-                system=task["system_prompt"],
-                temperature=task["options"]["temperature"],
-                max_tokens=task["options"]["max_tokens"],
-            ):
+
+            if task["mode"] == "cloud":
+                stream = openrouter_client.generate_stream(
+                    model=task["model"],
+                    prompt=task["user_prompt"],
+                    system=task["system_prompt"],
+                    temperature=task["options"]["temperature"],
+                    max_tokens=task["options"]["max_tokens"],
+                )
+            else:
+                stream = ollama_client.generate_stream(
+                    model=task["model"],
+                    prompt=task["user_prompt"],
+                    system=task["system_prompt"],
+                    temperature=task["options"]["temperature"],
+                    max_tokens=task["options"]["max_tokens"],
+                )
+
+            async for chunk in stream:
                 if chunk.get("done"):
                     yield {
                         "event": "complete",

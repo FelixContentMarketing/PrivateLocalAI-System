@@ -2,13 +2,21 @@ import { API_BASE } from './constants'
 import type {
   HealthResponse,
   ModelsResponse,
+  CloudModelsResponse,
   HardwareResponse,
   GenerateRequest,
   GenerateResponse,
+  SettingsResponse,
 } from './types'
 
 async function fetchJSON<T>(url: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE}${url}`, options)
+  const response = await fetch(`${API_BASE}${url}`, {
+    credentials: 'include',
+    ...options,
+    headers: {
+      ...options?.headers,
+    },
+  })
   if (!response.ok) {
     const error = await response.json().catch(() => ({ detail: 'Unbekannter Fehler' }))
     throw new Error(error.detail || `HTTP ${response.status}`)
@@ -22,6 +30,10 @@ export async function checkHealth(): Promise<HealthResponse> {
 
 export async function getModels(): Promise<ModelsResponse> {
   return fetchJSON('/models')
+}
+
+export async function getCloudModels(): Promise<CloudModelsResponse> {
+  return fetchJSON('/cloud-models')
 }
 
 export async function getHardware(): Promise<HardwareResponse> {
@@ -43,6 +55,7 @@ export async function exportDocument(
 ): Promise<Blob> {
   const response = await fetch(`${API_BASE}/export`, {
     method: 'POST',
+    credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ text, format, document_type: documentType }),
   })
@@ -50,4 +63,20 @@ export async function exportDocument(
     throw new Error('Export fehlgeschlagen')
   }
   return response.blob()
+}
+
+export async function getSettings(): Promise<SettingsResponse> {
+  return fetchJSON('/settings')
+}
+
+export async function updateSettings(data: {
+  openrouter_api_key?: string
+  selected_model?: string
+  log_level?: string
+}): Promise<SettingsResponse> {
+  return fetchJSON('/settings', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
 }

@@ -1,0 +1,40 @@
+# =============================================================
+# Lokale Docker-Installation -- Kanzlei Kissling KI-Assistent
+# =============================================================
+# Starten: docker compose up -d
+# Logs:    docker compose logs -f
+# Stoppen: docker compose down
+# =============================================================
+
+services:
+  app:
+    build: .
+    container_name: kanzlei-kissling-ki
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8000}:8000"
+    volumes:
+      - app-data:/app/data
+    environment:
+      # PFLICHT: Mindestens JWT_SECRET und Admin-Credentials setzen
+      - JWT_SECRET=${JWT_SECRET:-change-me-in-production-use-openssl-rand-hex-32}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@kanzlei-kissling.de}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
+
+      # OpenRouter (Cloud-Modelle) -- optional
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - SELECTED_MODEL=${SELECTED_MODEL:-google/gemini-2.5-flash}
+
+      # Ollama -- nur wenn Ollama auf dem Host oder in einem separaten Container laeuft
+      # Fuer Docker Desktop: host.docker.internal:11434
+      # Fuer Linux Docker: 172.17.0.1:11434 (Host-Gateway)
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+
+      # CORS -- im Docker-Betrieb wird Frontend vom gleichen Container ausgeliefert
+      - CORS_ORIGINS=${CORS_ORIGINS:-}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  app-data:
+    driver: local

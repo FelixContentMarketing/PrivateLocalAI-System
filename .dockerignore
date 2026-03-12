@@ -1,0 +1,13 @@
+node_modules
+.venv
+__pycache__
+*.pyc
+.git
+.gitignore
+*.md
+docs/
+frontend/dist
+frontend/node_modules
+data/
+.env
+.env.local

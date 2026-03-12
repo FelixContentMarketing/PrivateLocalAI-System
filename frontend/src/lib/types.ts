@@ -5,6 +5,9 @@ export interface HealthResponse {
     url: string
     error?: string
   }
+  openrouter: {
+    configured: boolean
+  }
 }
 
 export interface OllamaModel {
@@ -13,6 +16,18 @@ export interface OllamaModel {
   size_gb: number
   modified_at: string
   details: Record<string, unknown>
+}
+
+export interface CloudModel {
+  id: string
+  label: string
+  price: string
+}
+
+export interface CloudModelsResponse {
+  models: CloudModel[]
+  selected: string
+  api_key_set: boolean
 }
 
 export interface ModelsResponse {
@@ -54,6 +69,8 @@ export interface GenerateRequest {
   transcript: string
   format: FormatKey
   model?: string
+  mode?: 'local' | 'cloud'
+  cloud_model?: string
   temperature?: number
   max_tokens?: number
 }
@@ -61,6 +78,7 @@ export interface GenerateRequest {
 export interface GenerateResponse {
   task_id: string
   status: string
+  mode: string
   model: string
   format: string
 }
@@ -76,4 +94,18 @@ export interface FormatOption {
   label: string
   description: string
   icon: string
+}
+
+export interface AuthUser {
+  user_id: string
+  email: string
+  role: 'admin' | 'user'
+  name: string | null
+}
+
+export interface SettingsResponse {
+  openrouter_api_key_set: boolean
+  selected_model: string
+  available_models: CloudModel[]
+  log_level: string
 }
